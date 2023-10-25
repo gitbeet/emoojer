@@ -26,7 +26,7 @@ const CreatePostWizard = () => {
   return (
     <>
       {isSignedIn ? (
-        <div className="flex w-full items-center justify-between gap-4 border-b p-4 ">
+        <div className="flex w-full items-center justify-between gap-4 border-b border-slate-500 p-8 ">
           <div className="flex w-full items-center gap-4">
             <div className="flex w-fit flex-col items-center">
               <p className="text-center">{user.fullName}</p>

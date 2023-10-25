@@ -11,7 +11,7 @@ type PostWithUser = RouterOutputs["post"]["getAll"][number];
 
 const PostView = ({ post }: { post: PostWithUser }) => {
   return (
-    <div className="border-b border-slate-700 p-4" key={post.post.id}>
+    <div className="border-b border-slate-700  p-8" key={post.post.id}>
       <div className="flex gap-2">
         <Link href={`/${post.author.id}`}>
           <p>@{post.author.username}</p>

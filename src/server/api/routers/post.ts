@@ -1,5 +1,4 @@
 import { clerkClient } from "@clerk/nextjs";
-import { type User } from "@clerk/nextjs/dist/types/server";
 import { type Post } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import {
@@ -8,20 +7,7 @@ import {
   publicProcedure,
 } from "~/server/api/trpc";
 import z from "zod";
-
-const filterUserData = (user: User) => {
-  if (!user.username && !user.firstName) {
-    throw new TRPCError({
-      code: "INTERNAL_SERVER_ERROR",
-      message: "Author for post not found (filterUserData)",
-    });
-  }
-  return {
-    id: user.id,
-    username: user.username ?? `${user.firstName} ${user.lastName}`,
-    profilePicture: user.imageUrl,
-  };
-};
+import filterUserData from "~/server/helpers/filterUserData";
 
 const addUserDataToPosts = async (posts: Post[]) => {
   const users = (
@@ -92,5 +78,18 @@ export const postRouter = createTRPCRouter({
         });
       }
       return addUserDataToSinglePost(singlePost);
+    }),
+  // GET POSTS BY USER
+  getPostsByUserId: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { userId } = input;
+      const posts = await ctx.db.post.findMany({
+        where: {
+          authorId: userId,
+        },
+        take: 100,
+      });
+      return addUserDataToPosts(posts);
     }),
 });
