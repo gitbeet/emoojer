@@ -9,14 +9,19 @@ import React from "react";
 import SuperJSON from "superjson";
 import PostView from "~/components/PostView";
 import Layout from "~/components/layout";
+import { LoadingPage } from "~/components/loading";
 import { appRouter } from "~/server/api/root";
 import { db } from "~/server/db";
 import { api } from "~/utils/api";
+import { BiArrowBack } from "react-icons/bi";
+import { useRouter } from "next/router";
 
-const Posts = (props: { userId: string }) => {
+const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.post.getPostsByUserId.useQuery({
     userId: props.userId,
   });
+  if (isLoading) return <LoadingPage size={72} />;
+  if (!data) return <h1>Something went wrong</h1>;
   return (
     <section>
       {data?.map((post) => <PostView key={post.post.id} post={post} />)}
@@ -27,12 +32,14 @@ const Posts = (props: { userId: string }) => {
 const ProfilePage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
+  const { back } = useRouter();
   const { data, isLoading } = api.user.getUserById.useQuery({
     userId: props.userId,
   });
 
+  if (isLoading) return <LoadingPage size={48} />;
   if (!data) return <h1>Something went wrong</h1>;
-  if (isLoading) return <h1>Loading...</h1>;
+
   return (
     <>
       <Head>
@@ -41,17 +48,37 @@ const ProfilePage = (
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Layout>
-        <section>
-          <Image
-            width={96}
-            height={96}
-            src={data.profilePicture}
-            alt={`${data.username}'s profile picture`}
-            className="aspect-square  rounded-full border-4 border-black"
-          />
-          <div className="text-2xl">@{data.username}</div>
-        </section>
-        <Posts userId={data.id} />
+        <div>
+          <div className="fixed z-10 h-12 w-full xl:max-w-[700px]">
+            <div className="absolute h-full w-full bg-[black] opacity-50 backdrop-blur-md" />
+            <button
+              onClick={back}
+              className="absolute top-1/2 z-10 ml-8 flex -translate-y-1/2 items-center gap-2"
+            >
+              <BiArrowBack /> Go back
+            </button>
+          </div>
+          <div className="relative h-56 bg-gradient-to-r from-blue-800 to-indigo-900">
+            <Image
+              src={data.profilePicture}
+              alt={`@${data.username}'s profile picture`}
+              className="absolute bottom-0 left-0 -mb-[72px] ml-8 aspect-square rounded-full border-4 border-black bg-black"
+              width={144}
+              height={144}
+            />
+          </div>
+          <div className="h-20" />
+          <div className="px-8 text-2xl font-bold">{`@${data.username}`}</div>
+          <div className="h-16" />
+          <div className="relative w-fit pl-8 font-semibold ">
+            <p className="relative w-fit font-semibold after:absolute after:bottom-0 after:left-0 after:-mb-2 after:h-[6px] after:w-full after:bg-blue-500">
+              Posts
+            </p>
+          </div>
+          <div className="h-2 w-full border-b border-slate-600" />
+
+          <ProfileFeed userId={data.id} />
+        </div>
       </Layout>
     </>
   );
@@ -80,6 +107,7 @@ export const getServerSideProps = async (
 
   return {
     props: {
+      trpcState: helpers.dehydrate(),
       userId: slug,
     },
   };

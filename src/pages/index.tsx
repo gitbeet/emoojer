@@ -1,90 +1,11 @@
 import Head from "next/head";
 import { api } from "~/utils/api";
-import { useUser } from "@clerk/nextjs";
-import { SignInButton, SignOutButton } from "@clerk/clerk-react";
-import Image from "next/image";
-import React, { type ChangeEvent, useState } from "react";
-import LoadingSpinner from "~/components/loading";
 import Layout from "~/components/layout";
-import PostView from "~/components/PostView";
-
-const CreatePostWizard = () => {
-  const ctx = api.useUtils();
-  const [input, setInput] = useState("");
-  const { mutate, isLoading: Isposting } = api.post.createPost.useMutation({
-    onSuccess: () => {
-      setInput("");
-      void ctx.invalidate();
-    },
-  });
-  const { user, isSignedIn } = useUser();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    mutate({ content: input });
-  };
-  return (
-    <>
-      {isSignedIn ? (
-        <div className="flex w-full items-center justify-between gap-4 border-b border-slate-500 p-8 ">
-          <div className="flex w-full items-center gap-4">
-            <div className="flex w-fit flex-col items-center">
-              <p className="text-center">{user.fullName}</p>
-              <div className="h-2"></div>
-              <Image
-                className="rounded-full border-2 border-black"
-                src={user.imageUrl}
-                width={68}
-                height={68}
-                alt={`${user.fullName}'s profile picture`}
-              />
-            </div>
-
-            <form
-              className="flex grow items-center  gap-4"
-              onSubmit={(e: React.FormEvent) => handleSubmit(e)}
-            >
-              <textarea
-                rows={3}
-                className="w-full
-               resize-none border border-slate-600 bg-transparent"
-                value={input}
-                onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-                  setInput(e.target.value)
-                }
-              />
-
-              {Isposting ? (
-                <div className="flex w-24 justify-center">
-                  <LoadingSpinner />
-                </div>
-              ) : (
-                <button
-                  className="w-24 rounded-sm border border-slate-600 bg-slate-800 px-4 py-2"
-                  disabled={Isposting}
-                >
-                  Post
-                </button>
-              )}
-            </form>
-          </div>
-          <div className="h-fit rounded-sm border border-slate-600 bg-slate-800 px-4 py-2">
-            <SignOutButton />
-          </div>
-        </div>
-      ) : (
-        <div className="h-fit rounded-sm border border-slate-600 bg-slate-800 px-4 py-2">
-          <SignInButton />
-        </div>
-      )}
-    </>
-  );
-};
+import CreatePostWizard from "~/components/CreatePostWizard";
+import Feed from "~/components/Feed";
 
 export default function Home() {
-  const { data, isLoading } = api.post.getAll.useQuery();
-  if (!data) return <div>Something went wrong</div>;
-  if (isLoading) return <div>Loading...</div>;
+  api.post.getAll.useQuery();
 
   return (
     <>
@@ -95,11 +16,7 @@ export default function Home() {
       </Head>
       <Layout>
         <CreatePostWizard />
-        <section>
-          {data.map((post) => (
-            <PostView key={post.post.id} post={post} />
-          ))}
-        </section>
+        <Feed />
       </Layout>
     </>
   );

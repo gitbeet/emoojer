@@ -5,7 +5,7 @@ const LoadingSpinner = ({ size }: { size?: number }) => {
         width={size ?? 48}
         height={size ?? 48}
         aria-hidden="true"
-        className="mr-2 inline h-8 w-8 animate-spin fill-gray-600 text-gray-200 dark:fill-gray-300 dark:text-gray-600"
+        className="mr-2 inline animate-spin fill-gray-600 text-gray-200 dark:fill-gray-300 dark:text-gray-600"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -24,10 +24,10 @@ const LoadingSpinner = ({ size }: { size?: number }) => {
   );
 };
 
-export const LoadingPage = () => {
+export const LoadingPage = ({ size }: { size?: number }) => {
   return (
     <div className="absolute bottom-0 left-0 right-0 top-0 flex items-center justify-center">
-      <LoadingSpinner size={96} />
+      <LoadingSpinner size={size ?? 96} />
     </div>
   );
 };
