@@ -26,7 +26,6 @@ const SinglePostPage = (
   if (isLoading)
     return (
       <Layout>
-        {" "}
         <h1>Loading...</h1>
       </Layout>
     );
