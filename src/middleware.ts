@@ -7,12 +7,14 @@ export default authMiddleware({
     "/:userId",
     "/api/trpc/post.getAll",
     "/api/trpc/post.getPostById",
+    "/api/trpc/post.getPostsByUserId",
     "/api/trpc/post.getPostsByUserId,user.getUserById",
   ],
   apiRoutes: [
     "/api/trpc/post.getAll",
     "/api/trpc/user.getUserById",
     "/api/trpc/post.getPostsByUserId",
+    "/api/trpc/post.getPostsByUserId,user.getUserById",
   ],
 });
 
