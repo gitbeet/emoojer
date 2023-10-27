@@ -49,7 +49,7 @@ const ProfilePage = (
       </Head>
       <Layout>
         <div>
-          <div className="fixed z-10 h-12 w-full xl:max-w-[700px]">
+          <div className="sticky top-0 z-10 h-12 w-full xl:max-w-[700px]">
             <div className="absolute h-full w-full bg-[black] opacity-50 backdrop-blur-md" />
             <button
               onClick={back}
