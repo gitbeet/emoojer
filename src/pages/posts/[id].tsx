@@ -10,13 +10,42 @@ import { api } from "~/utils/api";
 import Layout from "~/components/layout";
 import PostView from "~/components/PostView";
 import Head from "next/head";
+import Image from "next/image";
+import Link from "next/link";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+import { useUser } from "@clerk/nextjs";
+import { useRef } from "react";
+import toast from "react-hot-toast";
+
+dayjs.extend(relativeTime);
 
 const SinglePostPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
+  const ctx = api.useUtils();
+  const user = useUser();
+  const { data: replies, isLoading: areRepliesLoading } =
+    api.reply.getRepliesByPostId.useQuery({ postId: props.postId });
+  const { mutate, isLoading: isCreatingReply } =
+    api.reply.createReply.useMutation({
+      onError: (error) => {
+        const errorMessage = error.data?.zodError?.fieldErrors?.content;
+        if (!errorMessage?.[0]) {
+          return toast.error(
+            "Reply could not be created.Please try again later",
+          );
+        }
+        toast.error(errorMessage[0]);
+      },
+      onSuccess: () => {
+        void ctx.invalidate();
+      },
+    });
   const { data, isLoading } = api.post.getPostById.useQuery({
     postId: props.postId,
   });
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
   if (!data)
     return (
       <Layout>
@@ -38,6 +67,59 @@ const SinglePostPage = (
       </Head>
       <Layout>
         <PostView post={data} />
+        {user.isSignedIn && (
+          <form
+            onSubmit={(e: React.FormEvent) => {
+              e.preventDefault();
+              if (!inputRef.current?.value) return;
+              mutate({
+                content: inputRef.current?.value,
+                postId: props.postId,
+              });
+            }}
+            className="flex w-full flex-col  gap-16 p-8"
+          >
+            <textarea
+              ref={inputRef}
+              className="grow resize-none rounded-sm border border-slate-600 bg-transparent"
+              rows={3}
+            />
+            <button
+              // disabled={!inputRef.current?.value}
+              className="self-end rounded-sm border px-4 py-2 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Reply
+            </button>
+          </form>
+        )}
+        {replies?.map((reply) => (
+          <div
+            className="border-b border-slate-700  p-8 pl-16"
+            key={reply.reply.id}
+          >
+            <div className="flex gap-2">
+              <Link href={`/${reply.author.id}`} className=" hover:underline">
+                <p>@{reply.author.username}</p>
+              </Link>
+              <Link href={`posts/${reply.reply.id}`}>
+                <p className="text-slate-400">
+                  {dayjs(reply.reply.createdAt).fromNow()}
+                </p>
+              </Link>
+            </div>
+            <div className="h-4"></div>
+            <div className="flex items-center gap-8">
+              <Image
+                className="rounded-full border-2 border-black"
+                src={reply.author.profilePicture}
+                width={68}
+                height={68}
+                alt={`${reply.author.username}'s profile picture`}
+              />
+              <p className="text-2xl">{reply.reply.content}</p>
+            </div>
+          </div>
+        ))}
       </Layout>
     </>
   );
