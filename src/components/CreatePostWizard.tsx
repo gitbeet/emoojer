@@ -72,13 +72,10 @@ const CreatePostWizard = () => {
               )}
             </form>
           </div>
-          <div className="h-fit w-fit rounded-sm border border-slate-600 bg-slate-800 px-4 py-2">
-            <SignOutButton />
-          </div>
         </div>
       ) : (
-        <div className="h-fit w-fit rounded-sm border border-slate-600 bg-slate-800 px-4 py-2">
-          <SignInButton />
+        <div className="w-full px-4 py-2 text-center text-2xl">
+          Sign in to post
         </div>
       )}
     </>

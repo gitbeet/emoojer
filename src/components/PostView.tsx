@@ -9,18 +9,30 @@ dayjs.extend(relativeTime);
 
 type PostWithUser = RouterOutputs["post"]["getAll"][number];
 
-const PostView = ({ post }: { post: PostWithUser }) => {
+const PostView = ({
+  post,
+  postPage = false,
+}: {
+  post: PostWithUser;
+  postPage?: boolean;
+}) => {
   return (
     <div className="border-b border-slate-700  p-8" key={post.post.id}>
       <div className="flex gap-2">
         <Link href={`/${post.author.id}`} className=" hover:underline">
           <p>@{post.author.username}</p>
         </Link>
-        <Link href={`posts/${post.post.id}`}>
+        {postPage ? (
           <p className="text-slate-400">
             {dayjs(post.post.createdAt).fromNow()}
           </p>
-        </Link>
+        ) : (
+          <Link href={`posts/${post.post.id}`}>
+            <p className="text-slate-400">
+              {dayjs(post.post.createdAt).fromNow()}
+            </p>
+          </Link>
+        )}
       </div>
       <div className="h-4"></div>
       <div className="flex items-center gap-8">

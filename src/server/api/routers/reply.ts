@@ -1,9 +1,11 @@
-import { Reply } from "@prisma/client";
+import { type Reply } from "@prisma/client";
 import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
 import z from "zod";
 import { clerkClient } from "@clerk/nextjs";
 import { TRPCError } from "@trpc/server";
 import filterUserData from "~/server/helpers/filterUserData";
+import { ratelimit } from "./post";
+import { TRPCClientError } from "@trpc/client";
 
 const addUserDataToReplies = async (reply: Reply[]) => {
   const users = (
@@ -37,6 +39,10 @@ export const replyRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { db, userId } = ctx;
+      const { success } = await ratelimit.limit(userId);
+      if (!success) {
+        throw new TRPCClientError("Don't spam ples!");
+      }
       const reply = await db.reply.create({
         data: {
           authorId: userId,
