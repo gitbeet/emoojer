@@ -14,9 +14,6 @@ import Image from "next/image";
 import Link from "next/link";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import { useUser } from "@clerk/nextjs";
-import { useRef } from "react";
-import toast from "react-hot-toast";
 import CreateReplyWizard from "~/components/CreateReplyWizard";
 
 dayjs.extend(relativeTime);
@@ -30,7 +27,6 @@ const SinglePostPage = (
   const { data, isLoading } = api.post.getPostById.useQuery({
     postId: props.postId,
   });
-  const inputRef = useRef<HTMLTextAreaElement | null>(null);
   if (!data)
     return (
       <Layout>

@@ -7,6 +7,9 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { api, type RouterOutputs } from "~/utils/api";
 import { BsTrashFill } from "react-icons/bs";
+import { FaEdit } from "react-icons/fa";
+import React, { useState } from "react";
+import { useRouter } from "next/router";
 
 dayjs.extend(relativeTime);
 
@@ -15,17 +18,38 @@ type PostWithUser = RouterOutputs["post"]["getAll"][number];
 const PostView = ({
   post,
   postPage = false,
+  editedPost,
+  setEditedPost,
 }: {
   post: PostWithUser;
   postPage?: boolean;
+  editedPost?: string;
+  setEditedPost?: React.Dispatch<React.SetStateAction<string>>;
 }) => {
+  const { back } = useRouter();
+  const [input, setInput] = useState(post.post.content);
   const ctx = api.useUtils();
   const { user } = useUser();
+  // EDIT POST
+  const { mutate: editPost, isLoading: isPostEditing } =
+    api.post.editPost.useMutation({
+      onSuccess: () => {
+        void ctx.invalidate();
+        toast.success("Post updated successfully");
+        setEditedPost?.("");
+      },
+      onError: (error) => {
+        toast.error(error.message);
+      },
+    });
+  // DELETE POST
   const { mutate: deletePost, isLoading: isDeletingPost } =
     api.post.deletePost.useMutation({
       onSuccess: () => {
         void ctx.invalidate();
         toast.success("Post deleted successfully");
+        back();
+        // navigate away on post delete
       },
       onError: (error) => {
         toast.error(error.message);
@@ -59,10 +83,42 @@ const PostView = ({
           height={68}
           alt={`${post.author.username}'s profile picture`}
         />
-        <p className="text-2xl">{post.post.content}</p>
+        {editedPost === post.post.id ? (
+          <>
+            <textarea
+              rows={3}
+              className="grow resize-none rounded-sm border border-slate-600 bg-transparent"
+              value={input}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setInput(e.target.value)
+              }
+            />
+            <button onClick={() => setEditedPost?.("")}>Cancel</button>
+            <button
+              onClick={() =>
+                editPost({
+                  content: input,
+                  authorId: post.author.id,
+                  postId: post.post.id,
+                })
+              }
+            >
+              Save
+            </button>
+          </>
+        ) : (
+          <p className="grow text-2xl">{post.post.content}</p>
+        )}
       </div>
       <div className="h-4"></div>
-      <div className="flex w-full justify-end">
+      <div className="flex w-full justify-end gap-4">
+        <button
+          disabled={isPostEditing || post.author.id !== user?.id}
+          onClick={() => setEditedPost?.(post.post.id)}
+          className=" cursor-pointer text-slate-200  disabled:opacity-50"
+        >
+          <FaEdit />
+        </button>
         <button
           disabled={isDeletingPost || post.author.id !== user?.id}
           onClick={() => deletePost({ postId: post.post.id })}

@@ -22,6 +22,7 @@ const CreateReplyWizard = ({ postId }: { postId: string }) => {
       onSuccess: () => {
         void ctx.invalidate();
         toast.success("Reply created successfully.");
+        setInput("");
       },
     });
   const inputRef = useRef<HTMLTextAreaElement | null>(null);
@@ -36,7 +37,6 @@ const CreateReplyWizard = ({ postId }: { postId: string }) => {
             content: input,
             postId,
           });
-          setInput("");
         }}
         className="flex w-full flex-col  gap-16 p-8"
       >

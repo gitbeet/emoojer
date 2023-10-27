@@ -20,6 +20,7 @@ model Post {
     authorId String
     replies Reply[]
     @@index([authorId])
+
 }
 
 
@@ -28,7 +29,7 @@ model Reply {
   content String
   createdAt DateTime @default(now())
   authorId String
-  post Post @relation(fields: [postId] , references: [id])
+  post Post @relation(fields: [postId] , references: [id] , onDelete: Cascade)
   postId String
   @@index([postId , authorId])
 }

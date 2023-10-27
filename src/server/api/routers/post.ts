@@ -61,6 +61,36 @@ export const postRouter = createTRPCRouter({
     });
     return addUserDataToPosts(allPosts);
   }),
+  editPost: privateProcedure
+    .input(
+      z.object({
+        content: z.string().emoji("Only emojis allowed."),
+        authorId: z.string(),
+        postId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx;
+      const { content, postId, authorId } = input;
+
+      if (userId !== authorId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You cannot edit this post",
+        });
+      }
+
+      const editedPost = await ctx.db.post.update({
+        where: {
+          id: postId,
+        },
+        data: {
+          content,
+        },
+      });
+
+      return editedPost;
+    }),
   deletePost: privateProcedure
     .input(z.object({ postId: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -75,7 +105,7 @@ export const postRouter = createTRPCRouter({
       if (!post || post.authorId !== ctx.userId) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "You cannot delete this comment.",
+          message: "You cannot delete this post.",
         });
       }
       const deletedPost = await ctx.db.post.delete({
