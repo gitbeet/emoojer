@@ -19,8 +19,21 @@ model Post {
     createdAt DateTime @default(now())
     authorId String
     replies Reply[]
-    @@index([authorId])
+    likes Like[]
+    @@index([authorId] ,name:"post_user_index")
 
+}
+
+
+model Like {
+  id String @id @default(cuid())
+  reply Reply? @relation(fields: [replyId] , references: [id])
+  replyId String?
+  post Post? @relation(fields: [postId] , references: [id])
+  postId String?
+  authorId String
+  @@index([postId] , name:"post_likes_index")
+  @@index([replyId]  ,name :"reply_likes_index")
 }
 
 
@@ -31,5 +44,7 @@ model Reply {
   authorId String
   post Post @relation(fields: [postId] , references: [id] , onDelete: Cascade)
   postId String
-  @@index([postId , authorId])
+  likes Like[]
+  @@index([postId] ,name:"reply_post_index")
+  @@index([authorId] ,name:"reply_user_index")
 }

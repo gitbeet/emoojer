@@ -7,7 +7,7 @@ import Link from "next/link";
 import toast from "react-hot-toast";
 import { api, type RouterOutputs } from "~/utils/api";
 import { BsTrashFill } from "react-icons/bs";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaHeart } from "react-icons/fa";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 
@@ -30,6 +30,22 @@ const PostView = ({
   const [input, setInput] = useState(post.post.content);
   const ctx = api.useUtils();
   const { user } = useUser();
+  // DID I LIKE IT
+  const { data: didIlike, isLoading: isCalculatingIfILiked } =
+    api.like.didIlike.useQuery({ type: "POST", id: post.post.id });
+  // GET LIKES
+  const { data: likes, isLoading: isGettingLikes } =
+    api.like.getLikesById.useQuery({ id: post.post.id, type: "POST" });
+  // LIKE POST
+  const { mutate: like, isLoading: isLiking } = api.like.like.useMutation({
+    onSuccess: () => {
+      void ctx.invalidate();
+      toast.success("Action successful");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
   // EDIT POST
   const { mutate: editPost, isLoading: isPostEditing } =
     api.post.editPost.useMutation({
@@ -112,6 +128,16 @@ const PostView = ({
       </div>
       <div className="h-4"></div>
       <div className="flex w-full justify-end gap-4">
+        <div className="flex items-center gap-1">
+          <p>{likes}</p>
+          <button
+            disabled={isLiking}
+            onClick={() => like({ id: post.post.id, type: "POST" })}
+          >
+            <FaHeart className={didIlike ? "text-red-500" : "text-slate-200"} />
+          </button>
+        </div>
+
         <button
           disabled={isPostEditing || post.author.id !== user?.id}
           onClick={() => setEditedPost?.(post.post.id)}
@@ -122,7 +148,7 @@ const PostView = ({
         <button
           disabled={isDeletingPost || post.author.id !== user?.id}
           onClick={() => deletePost({ postId: post.post.id })}
-          className=" cursor-pointer text-red-600  disabled:opacity-50"
+          className=" cursor-pointer text-red-500  disabled:opacity-50"
         >
           <BsTrashFill />
         </button>
