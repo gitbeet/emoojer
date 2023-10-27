@@ -61,6 +61,30 @@ export const postRouter = createTRPCRouter({
     });
     return addUserDataToPosts(allPosts);
   }),
+  deletePost: privateProcedure
+    .input(z.object({ postId: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const post = await ctx.db.post.findUnique({
+        where: {
+          id: input.postId,
+        },
+        select: {
+          authorId: true,
+        },
+      });
+      if (!post || post.authorId !== ctx.userId) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "You cannot delete this comment.",
+        });
+      }
+      const deletedPost = await ctx.db.post.delete({
+        where: {
+          id: input.postId,
+        },
+      });
+      return deletedPost;
+    }),
   // CREATE NEW POST
   createPost: privateProcedure
     .input(
