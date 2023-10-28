@@ -8,6 +8,7 @@ const filterUserData = (user: User) => {
       message: "Author for post not found (filterUserData)",
     });
   }
+
   return {
     id: user.id,
     username: user.username ?? `${user.firstName} ${user.lastName ?? ""}`,

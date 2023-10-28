@@ -30,10 +30,9 @@ const CreatePostWizard = () => {
   return (
     <>
       {isSignedIn ? (
-        <div className="flex w-full items-center justify-between gap-4 border-b border-slate-500 p-8 ">
-          <div className="flex w-full items-center gap-4">
+        <div className="flex w-full items-center justify-center gap-4 border-b border-slate-500 p-8 ">
+          <div className="flex w-full max-w-[700px]  items-start  gap-4">
             <div className="flex w-fit flex-col items-center">
-              <p className="text-center">{user.fullName}</p>
               <div className="h-2"></div>
               <Image
                 className="rounded-full border-2 border-black"
@@ -45,7 +44,7 @@ const CreatePostWizard = () => {
             </div>
 
             <form
-              className="flex grow items-center  gap-4"
+              className="flex grow flex-col items-center gap-4  md:flex-row"
               onSubmit={(e: React.FormEvent) => handleSubmit(e)}
             >
               <textarea
@@ -59,12 +58,12 @@ const CreatePostWizard = () => {
               />
 
               {Isposting ? (
-                <div className="flex w-24 justify-center">
+                <div className="flex w-24 justify-center self-end">
                   <LoadingSpinner />
                 </div>
               ) : (
                 <button
-                  className="w-24 rounded-sm border border-slate-600 bg-slate-800 px-4 py-2"
+                  className="w-24 self-end rounded-sm border border-slate-600 bg-slate-800 px-4 py-2  md:self-center"
                   disabled={Isposting}
                 >
                   Post

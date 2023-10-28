@@ -1,14 +1,15 @@
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
-import { useRef, useState } from "react";
+import { type ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { api } from "~/utils/api";
+import LoadingSpinner from "./loading";
 
 const CreateReplyWizard = ({ postId }: { postId: string }) => {
   const [input, setInput] = useState("");
   const ctx = api.useUtils();
   const user = useUser();
-  const { mutate, isLoading: isCreatingReply } =
+  const { mutate: reply, isLoading: isCreatingReply } =
     api.reply.createReply.useMutation({
       onError: (error) => {
         const errorMessage = error.data?.zodError?.fieldErrors?.content;
@@ -25,54 +26,69 @@ const CreateReplyWizard = ({ postId }: { postId: string }) => {
         setInput("");
       },
     });
-  const inputRef = useRef<HTMLTextAreaElement | null>(null);
 
   return (
-    user &&
-    user.isSignedIn && (
-      <form
-        onSubmit={(e: React.FormEvent) => {
-          e.preventDefault();
-          mutate({
-            content: input,
-            postId,
-          });
-        }}
-        className="flex w-full flex-col  gap-8 px-8 pb-0 pt-8"
-      >
-        <p>Write a reply</p>
-        <div className="flex items-center gap-4">
-          <Image
-            width={56}
-            height={56}
-            className="rounded-full border border-black"
-            src={user.user?.imageUrl ?? ""}
-            alt={
-              user.user.username ??
-              (user.user.firstName && user.user.lastName
-                ? `${user.user.firstName} ${user.user.lastName}`
-                : "user") + "'s profile picture"
-            }
-          />
-          <textarea
-            value={input}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              setInput(e.target.value)
-            }
-            ref={inputRef}
-            className="grow resize-none rounded-sm border border-slate-600 bg-transparent"
-            rows={3}
-          />
-        </div>
+    <>
+      {user && user.isSignedIn ? (
+        <div className="flex w-full items-center justify-center gap-4 border-b border-slate-500 p-8 ">
+          <div className="flex w-full max-w-[700px]  items-start  gap-4">
+            <div className="flex w-fit flex-col items-center">
+              <div className="h-2"></div>
+              <Image
+                className="rounded-full border-2 border-black"
+                src={user.user?.imageUrl ?? ""}
+                alt={
+                  user.user.username ??
+                  (user.user.firstName && user.user.lastName
+                    ? `${user.user.firstName} ${user.user.lastName}`
+                    : "user") + "'s profile picture"
+                }
+                width={68}
+                height={68}
+              />
+            </div>
 
-        <button
-          disabled={input.length < 1 || isCreatingReply}
-          className="self-end rounded-sm border px-4 py-2 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          Reply
-        </button>
-      </form>
-    )
+            <form
+              className="flex grow flex-col items-center gap-4  md:flex-row"
+              onSubmit={(e: React.FormEvent) => {
+                e.preventDefault();
+                reply({
+                  content: input,
+                  postId,
+                });
+              }}
+            >
+              <textarea
+                rows={3}
+                className="w-full
+               resize-none border border-slate-600 bg-transparent"
+                value={input}
+                onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+                  setInput(e.target.value)
+                }
+              />
+
+              {isCreatingReply ? (
+                <div className="flex w-24 justify-center self-end">
+                  <LoadingSpinner />
+                </div>
+              ) : (
+                <button
+                  className="w-24 self-end rounded-sm border border-slate-600 bg-slate-800 px-4 py-2  md:self-center"
+                  disabled={isCreatingReply}
+                >
+                  Reply
+                </button>
+              )}
+            </form>
+          </div>
+        </div>
+      ) : (
+        <div className="w-full px-4 py-2 text-center text-2xl">
+          Sign in to post
+        </div>
+      )}
+    </>
   );
 };
 

@@ -1,5 +1,4 @@
 import { clerkClient } from "@clerk/nextjs";
-import { type Post } from "@prisma/client";
 import { TRPCError } from "@trpc/server";
 import {
   createTRPCRouter,
@@ -10,8 +9,6 @@ import z from "zod";
 import filterUserData from "~/server/helpers/filterUserData";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-
-const numberRegex = new RegExp(/^[a-zA-Z]+[-'s]?[a-zA-Z ]+$/);
 
 type PostWithLikes = {
   likes: {
