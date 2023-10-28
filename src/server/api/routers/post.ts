@@ -72,7 +72,7 @@ export const postRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { userId } = ctx;
       const { content, postId, authorId } = input;
-
+      //  NOT SURE
       if (userId !== authorId) {
         throw new TRPCError({
           code: "UNAUTHORIZED",

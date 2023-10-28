@@ -15,12 +15,24 @@ import Link from "next/link";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import CreateReplyWizard from "~/components/CreateReplyWizard";
+import { FaHeart } from "react-icons/fa";
+import { useUser } from "@clerk/nextjs";
+import ReplyView from "~/components/ReplyView";
+import { LoadingPage } from "~/components/loading";
 
 dayjs.extend(relativeTime);
 
 const SinglePostPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
+  const ctx = api.useUtils();
+  const user = useUser();
+  const { mutate: likeAReply, isLoading: isLikingAReply } =
+    api.like.like.useMutation({
+      onSuccess: () => {
+        void ctx.invalidate();
+      },
+    });
   const { data: replies, isLoading: areRepliesLoading } =
     api.reply.getRepliesByPostId.useQuery({ postId: props.postId });
 
@@ -50,32 +62,13 @@ const SinglePostPage = (
         <PostView post={data} postPage />
         <CreateReplyWizard postId={props.postId} />
         <p className="border-b border-slate-600 py-2 pl-8 text-xl">Replies</p>
-        {replies?.map((reply) => (
-          <div
-            className="border-b border-slate-700  p-8 pl-16"
-            key={reply.reply.id}
-          >
-            <div className="flex gap-2">
-              <Link href={`/${reply.author.id}`} className=" hover:underline">
-                <p>@{reply.author.username}</p>
-              </Link>
-              <p className="text-slate-400">
-                {dayjs(reply.reply.createdAt).fromNow()}
-              </p>
-            </div>
-            <div className="h-4"></div>
-            <div className="flex items-center gap-8">
-              <Image
-                className="rounded-full border-2 border-black"
-                src={reply.author.profilePicture}
-                width={68}
-                height={68}
-                alt={`${reply.author.username}'s profile picture`}
-              />
-              <p className="text-2xl">{reply.reply.content}</p>
-            </div>
-          </div>
-        ))}
+        {areRepliesLoading ? (
+          <LoadingPage />
+        ) : (
+          replies?.map((reply) => (
+            <ReplyView key={reply.reply.id} reply={reply} />
+          ))
+        )}
       </Layout>
     </>
   );

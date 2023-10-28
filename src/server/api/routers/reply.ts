@@ -6,16 +6,29 @@ import { TRPCError } from "@trpc/server";
 import filterUserData from "~/server/helpers/filterUserData";
 import { ratelimit } from "./post";
 import { TRPCClientError } from "@trpc/client";
+import { RouterOutputs } from "~/utils/api";
 
-const addUserDataToReplies = async (reply: Reply[]) => {
+type ReplyWithLikes = {
+  likes: {
+    authorId: string;
+  }[];
+
+  id: string;
+  content: string;
+  createdAt: Date;
+  authorId: string;
+  postId: string;
+};
+
+const addUserDataToReplies = async (replies: ReplyWithLikes[]) => {
   const users = (
     await clerkClient.users.getUserList({
-      userId: reply.map((post) => post.authorId),
+      userId: replies.map((post) => post.authorId),
       limit: 100,
     })
   ).map(filterUserData);
 
-  return reply.map((reply) => {
+  return replies.map((reply) => {
     const author = users.find((user) => user.id === reply.authorId);
 
     if (!author) {
@@ -30,6 +43,56 @@ const addUserDataToReplies = async (reply: Reply[]) => {
 };
 
 export const replyRouter = createTRPCRouter({
+  deleteReply: privateProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        authorId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, authorId } = input;
+      const { userId } = ctx;
+      //  NOT SURE
+      if (userId !== authorId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You cannot delete this reply",
+        });
+      }
+      await ctx.db.reply.delete({
+        where: {
+          id,
+        },
+      });
+    }),
+  editReply: privateProcedure
+    .input(
+      z.object({
+        content: z.string().emoji("Only emojis are allowed!"),
+        id: z.string(),
+        authorId: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { content, id, authorId } = input;
+      const { userId } = ctx;
+      //  NOT SURE
+      if (userId !== authorId) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "You cannot edit this reply",
+        });
+      }
+      await ctx.db.reply.update({
+        where: {
+          id,
+        },
+        data: {
+          content,
+        },
+      });
+    }),
   createReply: privateProcedure
     .input(
       z.object({
@@ -61,6 +124,13 @@ export const replyRouter = createTRPCRouter({
         },
         orderBy: {
           createdAt: "desc",
+        },
+        include: {
+          likes: {
+            select: {
+              authorId: true,
+            },
+          },
         },
         take: 100,
       });

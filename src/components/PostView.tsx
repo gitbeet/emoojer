@@ -6,8 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import toast from "react-hot-toast";
 import { api, type RouterOutputs } from "~/utils/api";
-import { BsTrashFill } from "react-icons/bs";
-import { FaEdit, FaHeart } from "react-icons/fa";
+import { FaEdit, FaHeart, FaTrash } from "react-icons/fa";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 
@@ -18,14 +17,11 @@ type PostWithUser = RouterOutputs["post"]["getAll"][number];
 const PostView = ({
   post,
   postPage = false,
-  editedPost,
-  setEditedPost,
 }: {
   post: PostWithUser;
   postPage?: boolean;
-  editedPost?: string;
-  setEditedPost?: React.Dispatch<React.SetStateAction<string>>;
 }) => {
+  const [edit, setEdit] = useState(false);
   const { back } = useRouter();
   const [input, setInput] = useState(post.post.content);
   const ctx = api.useUtils();
@@ -52,7 +48,7 @@ const PostView = ({
       onSuccess: () => {
         void ctx.invalidate();
         toast.success("Post updated successfully");
-        setEditedPost?.("");
+        setEdit(false);
       },
       onError: (error) => {
         toast.error(error.message);
@@ -99,17 +95,17 @@ const PostView = ({
           height={68}
           alt={`${post.author.username}'s profile picture`}
         />
-        {editedPost === post.post.id ? (
+        {edit ? (
           <>
             <textarea
               rows={3}
-              className="grow resize-none rounded-sm border border-slate-600 bg-transparent"
+              className="grow resize-none rounded-sm border border-slate-600 bg-transparent text-2xl"
               value={input}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setInput(e.target.value)
               }
             />
-            <button onClick={() => setEditedPost?.("")}>Cancel</button>
+            <button onClick={() => setEdit(false)}>Cancel</button>
             <button
               onClick={() =>
                 editPost({
@@ -129,29 +125,36 @@ const PostView = ({
       <div className="h-4"></div>
       <div className="flex w-full justify-end gap-4">
         <div className="flex items-center gap-1">
-          <p>{likes}</p>
+          <p className="font-light text-slate-400">{likes}</p>
           <button
             disabled={isLiking}
             onClick={() => like({ id: post.post.id, type: "POST" })}
           >
-            <FaHeart className={didIlike ? "text-red-500" : "text-slate-200"} />
+            <FaHeart
+              className={
+                didIlike ? "text-red-500 hover:text-red-400" : "text-slate-200"
+              }
+            />
           </button>
         </div>
-
-        <button
-          disabled={isPostEditing || post.author.id !== user?.id}
-          onClick={() => setEditedPost?.(post.post.id)}
-          className=" cursor-pointer text-slate-200  disabled:opacity-50"
-        >
-          <FaEdit />
-        </button>
-        <button
-          disabled={isDeletingPost || post.author.id !== user?.id}
-          onClick={() => deletePost({ postId: post.post.id })}
-          className=" cursor-pointer text-red-500  disabled:opacity-50"
-        >
-          <BsTrashFill />
-        </button>
+        {postPage && post.author.id === user?.id && (
+          <>
+            <button
+              disabled={isPostEditing}
+              onClick={() => setEdit(true)}
+              className=" cursor-pointer text-slate-300 hover:text-slate-100 disabled:opacity-50"
+            >
+              <FaEdit />
+            </button>
+            <button
+              disabled={isDeletingPost}
+              onClick={() => deletePost({ postId: post.post.id })}
+              className=" cursor-pointer text-red-500 hover:text-red-400  disabled:opacity-50"
+            >
+              <FaTrash />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );
