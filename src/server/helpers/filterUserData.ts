@@ -10,7 +10,7 @@ const filterUserData = (user: User) => {
   }
   return {
     id: user.id,
-    username: user.username ?? `${user.firstName} ${user.lastName}`,
+    username: user.username ?? `${user.firstName} ${user.lastName ?? ""}`,
     profilePicture: user.imageUrl,
   };
 };
