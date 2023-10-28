@@ -11,6 +11,8 @@ import filterUserData from "~/server/helpers/filterUserData";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
+const numberRegex = new RegExp(/^[a-zA-Z]+[-'s]?[a-zA-Z ]+$/);
+
 type PostWithLikes = {
   likes: {
     authorId: string;
@@ -95,7 +97,10 @@ export const postRouter = createTRPCRouter({
   editPost: privateProcedure
     .input(
       z.object({
-        content: z.string().emoji("Only emojis allowed."),
+        content: z
+          .string()
+          .regex(new RegExp(/^[^\d]*$/), "Only emojis allowed.")
+          .emoji("Only emojis allowed."),
         authorId: z.string(),
         postId: z.string(),
       }),
@@ -152,6 +157,7 @@ export const postRouter = createTRPCRouter({
       z.object({
         content: z
           .string()
+          .regex(new RegExp(/^[^\d]*$/), "Only emojis allowed.")
           .emoji("Only emojis are allowed!")
           .min(1, "Cannot be empty")
           .max(280),

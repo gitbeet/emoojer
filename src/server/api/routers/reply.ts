@@ -67,7 +67,10 @@ export const replyRouter = createTRPCRouter({
   editReply: privateProcedure
     .input(
       z.object({
-        content: z.string().emoji("Only emojis are allowed!"),
+        content: z
+          .string()
+          .regex(new RegExp(/^[^\d]*$/), "Only emojis allowed.")
+          .emoji("Only emojis are allowed!"),
         id: z.string(),
         authorId: z.string(),
       }),
@@ -94,7 +97,12 @@ export const replyRouter = createTRPCRouter({
   createReply: privateProcedure
     .input(
       z.object({
-        content: z.string().emoji("Only emojis allowed!").min(1).max(280),
+        content: z
+          .string()
+          .regex(new RegExp(/^[^\d]*$/), "Only emojis allowed.")
+          .emoji("Only emojis allowed!")
+          .min(1)
+          .max(280),
         postId: z.string(),
       }),
     )
