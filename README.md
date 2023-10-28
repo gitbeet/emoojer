@@ -1,28 +1,42 @@
-# Create T3 App
+# **Emoojer**
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+The app started as me doing a T3 stack tutorial then added more CRUD functionality.
 
-## What's next? How do I make an app with this?
+## Demo
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+The project is hosted on **vercel.com**. You can visit it by clicking [here](https://emoojer.vercel.app/).
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## Project status
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+The project is still under development.
 
-## Learn More
+## Features
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+- ### Initial page with all the posts
+- ### Individual post page with the post and all the replies
+- ### User profile page containing user information and all his posts
+- ### Create and update posts with input validation
+- ### User functionality
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+  - Sign in/out with google/github account
+  - Create, update, and delete your posts
+  - Create, update, and delete your replies
+  - Like/unlike posts/replies
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+- ### Responsive design
+  - The web app includes mobile, tablet and desktop version
 
-## How do I deploy this?
+## Technologies used
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- React - javascript framework / library
+- NextJS - React framework
+- Tailwindcss - CSS framework
+- Typescript - for type safety
+- tRPC - build and consume type-safe API
+- Prisma - type-safe (typescript) ORM
+- Clerk - authentication and user management service
+- Upstash - for ratelimiting (spam control)
+- DayJS - date formatting library
+- Planetscale - database hosting service
+- ZOD - input validation library
+- React-icons - icons library
