@@ -1,4 +1,3 @@
-import { type Reply } from "@prisma/client";
 import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
 import z from "zod";
 import { clerkClient } from "@clerk/nextjs";
@@ -6,7 +5,6 @@ import { TRPCError } from "@trpc/server";
 import filterUserData from "~/server/helpers/filterUserData";
 import { ratelimit } from "./post";
 import { TRPCClientError } from "@trpc/client";
-import { RouterOutputs } from "~/utils/api";
 
 type ReplyWithLikes = {
   likes: {

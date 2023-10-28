@@ -10,13 +10,9 @@ import { api } from "~/utils/api";
 import Layout from "~/components/layout";
 import PostView from "~/components/PostView";
 import Head from "next/head";
-import Image from "next/image";
-import Link from "next/link";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import CreateReplyWizard from "~/components/CreateReplyWizard";
-import { FaHeart } from "react-icons/fa";
-import { useUser } from "@clerk/nextjs";
 import ReplyView from "~/components/ReplyView";
 import { LoadingPage } from "~/components/loading";
 
@@ -25,14 +21,6 @@ dayjs.extend(relativeTime);
 const SinglePostPage = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
-  const ctx = api.useUtils();
-  const user = useUser();
-  const { mutate: likeAReply, isLoading: isLikingAReply } =
-    api.like.like.useMutation({
-      onSuccess: () => {
-        void ctx.invalidate();
-      },
-    });
   const { data: replies, isLoading: areRepliesLoading } =
     api.reply.getRepliesByPostId.useQuery({ postId: props.postId });
 
@@ -61,9 +49,15 @@ const SinglePostPage = (
       <Layout>
         <PostView post={data} postPage />
         <CreateReplyWizard postId={props.postId} />
-        <p className="border-b border-slate-600 py-2 pl-8 text-xl">Replies</p>
+        <div className="border-b border-slate-600 pb-[6px] pl-8 pt-4  ">
+          <p className="relative w-fit font-semibold after:absolute after:left-0 after:top-full  after:h-[6px] after:w-full  after:bg-blue-500">
+            Replies
+          </p>
+        </div>
         {areRepliesLoading ? (
           <LoadingPage />
+        ) : !replies ? (
+          <h1>Something went wrong</h1>
         ) : (
           replies?.map((reply) => (
             <ReplyView key={reply.reply.id} reply={reply} />

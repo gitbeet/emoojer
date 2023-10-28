@@ -1,39 +1,6 @@
-import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
+import { createTRPCRouter, privateProcedure } from "../trpc";
 import z from "zod";
 export const likeRouter = createTRPCRouter({
-  didIlike: privateProcedure
-    .input(z.object({ type: z.enum(["POST", "REPLY"]), id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const didILike = await ctx.db.like.findFirst({
-        where: {
-          AND: [
-            { authorId: ctx.userId },
-            {
-              ...(input.type === "POST"
-                ? { postId: input.id }
-                : input.type === "REPLY"
-                ? { replyId: input.id }
-                : {}),
-            },
-          ],
-        },
-      });
-      return !!didILike?.id;
-    }),
-  getLikesById: publicProcedure
-    .input(z.object({ type: z.enum(["POST", "REPLY"]), id: z.string() }))
-    .query(async ({ ctx, input }) => {
-      const likes = await ctx.db.like.count({
-        where: {
-          ...(input.type === "POST"
-            ? { postId: input.id }
-            : input.type === "REPLY"
-            ? { replyId: input.id }
-            : {}),
-        },
-      });
-      return likes;
-    }),
   like: privateProcedure
     .input(z.object({ type: z.enum(["POST", "REPLY"]), id: z.string() }))
     .mutation(async ({ ctx, input }) => {

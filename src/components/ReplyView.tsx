@@ -45,8 +45,11 @@ const ReplyView = ({ reply }: { reply: ReplyWithLikes }) => {
     },
   });
   return (
-    <div className="border-b border-slate-700 p-8 pl-16" key={reply.reply.id}>
-      <div className="flex gap-2">
+    <div
+      className="border-b border-slate-700 px-8 py-6 pl-16"
+      key={reply.reply.id}
+    >
+      <div className="flex gap-2 text-sm">
         <Link href={`/${reply.author.id}`} className=" hover:underline">
           <p>@{reply.author.username}</p>
         </Link>
@@ -59,14 +62,14 @@ const ReplyView = ({ reply }: { reply: ReplyWithLikes }) => {
         <Image
           className="rounded-full border-2 border-black"
           src={reply.author.profilePicture}
-          width={68}
-          height={68}
+          width={48}
+          height={48}
           alt={`${reply.author.username}'s profile picture`}
         />
         {editing ? (
           <div className="flex">
             <textarea
-              className="w-full grow resize-none rounded-sm border border-slate-600 bg-transparent text-2xl"
+              className="w-full grow resize-none rounded-sm border border-slate-600 bg-transparent text-xl"
               value={input}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setInput(e.target.value)
@@ -88,18 +91,21 @@ const ReplyView = ({ reply }: { reply: ReplyWithLikes }) => {
             </div>
           </div>
         ) : (
-          <p className="text-2xl">{reply.reply.content}</p>
+          <p className="text-xl">{reply.reply.content}</p>
         )}
       </div>
-      <div className="h-4"></div>
+      <div className="h-2"></div>
       <div className="flex justify-end gap-4">
         <div className="flex items-center gap-1">
           <p className="font-light text-slate-400">
             {reply.reply.likes.length}
           </p>
           <button
+            className={user.isSignedIn ? "" : "cursor-default"}
             disabled={isLiking}
-            onClick={() => like({ id: reply.reply.id, type: "REPLY" })}
+            onClick={() =>
+              user.isSignedIn ? like({ id: reply.reply.id, type: "REPLY" }) : {}
+            }
           >
             <FaHeart
               className={

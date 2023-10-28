@@ -11,6 +11,25 @@ import filterUserData from "~/server/helpers/filterUserData";
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
 
+type PostWithLikes = {
+  likes: {
+    authorId: string;
+  }[];
+  id: string;
+  content: string;
+  createdAt: Date;
+  authorId: string;
+};
+
+export type PostWithUserAndLikes = {
+  post: PostWithLikes;
+  author: {
+    username: string;
+    id: string;
+    profilePicture: string;
+  };
+};
+
 export const ratelimit = new Ratelimit({
   redis: Redis.fromEnv(),
   limiter: Ratelimit.slidingWindow(3, "1 m"),
@@ -23,7 +42,9 @@ export const ratelimit = new Ratelimit({
   prefix: "@upstash/ratelimit",
 });
 
-const addUserDataToPosts = async (posts: Post[]) => {
+const addUserDataToPosts = async (
+  posts: PostWithLikes[],
+): Promise<PostWithUserAndLikes[]> => {
   const users = (
     await clerkClient.users.getUserList({
       userId: posts.map((post) => post.authorId),
@@ -45,7 +66,9 @@ const addUserDataToPosts = async (posts: Post[]) => {
   });
 };
 
-const addUserDataToSinglePost = async (post: Post) => {
+const addUserDataToSinglePost = async (
+  post: PostWithLikes,
+): Promise<PostWithUserAndLikes> => {
   const user = await clerkClient.users.getUser(post.authorId);
   const filteredUser = filterUserData(user);
   return { post, author: filteredUser };
@@ -58,6 +81,14 @@ export const postRouter = createTRPCRouter({
       orderBy: {
         createdAt: "desc",
       },
+      include: {
+        likes: {
+          select: {
+            authorId: true,
+          },
+        },
+      },
+      take: 100,
     });
     return addUserDataToPosts(allPosts);
   }),
@@ -147,6 +178,13 @@ export const postRouter = createTRPCRouter({
         where: {
           id: input.postId,
         },
+        include: {
+          likes: {
+            select: {
+              authorId: true,
+            },
+          },
+        },
       });
       if (!singlePost) {
         throw new TRPCError({
@@ -164,6 +202,13 @@ export const postRouter = createTRPCRouter({
       const posts = await ctx.db.post.findMany({
         where: {
           authorId: userId,
+        },
+        include: {
+          likes: {
+            select: {
+              authorId: true,
+            },
+          },
         },
         take: 100,
       });

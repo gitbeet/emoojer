@@ -38,8 +38,9 @@ const CreateReplyWizard = ({ postId }: { postId: string }) => {
             postId,
           });
         }}
-        className="flex w-full flex-col  gap-16 p-8"
+        className="flex w-full flex-col  gap-8 px-8 pb-0 pt-8"
       >
+        <p>Write a reply</p>
         <div className="flex items-center gap-4">
           <Image
             width={56}

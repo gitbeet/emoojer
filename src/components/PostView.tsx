@@ -1,38 +1,32 @@
 import { useUser } from "@clerk/nextjs";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-
 import Image from "next/image";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import { api, type RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 import { FaEdit, FaHeart, FaTrash } from "react-icons/fa";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import { type PostWithUserAndLikes } from "~/server/api/routers/post";
 
 dayjs.extend(relativeTime);
 
-type PostWithUser = RouterOutputs["post"]["getAll"][number];
+// type PostWithUser = RouterOutputs["post"]["getAll"][number];
 
 const PostView = ({
   post,
   postPage = false,
 }: {
-  post: PostWithUser;
+  post: PostWithUserAndLikes;
   postPage?: boolean;
 }) => {
   const [edit, setEdit] = useState(false);
   const { back } = useRouter();
   const [input, setInput] = useState(post.post.content);
   const ctx = api.useUtils();
-  const { user } = useUser();
-  // DID I LIKE IT
-  const { data: didIlike, isLoading: isCalculatingIfILiked } =
-    api.like.didIlike.useQuery({ type: "POST", id: post.post.id });
-  // GET LIKES
-  const { data: likes, isLoading: isGettingLikes } =
-    api.like.getLikesById.useQuery({ id: post.post.id, type: "POST" });
-  // LIKE POST
+  const user = useUser();
+
   const { mutate: like, isLoading: isLiking } = api.like.like.useMutation({
     onSuccess: () => {
       void ctx.invalidate();
@@ -69,7 +63,10 @@ const PostView = ({
     });
 
   return (
-    <div className="border-b border-slate-700  p-8" key={post.post.id}>
+    <div
+      className={`${postPage ? "" : "border-b"} border-slate-700  p-8`}
+      key={post.post.id}
+    >
       <div className="flex gap-2">
         <Link href={`/${post.author.id}`} className=" hover:underline">
           <p>@{post.author.username}</p>
@@ -125,19 +122,27 @@ const PostView = ({
       <div className="h-4"></div>
       <div className="flex w-full justify-end gap-4">
         <div className="flex items-center gap-1">
-          <p className="font-light text-slate-400">{likes}</p>
+          <p className="font-light text-slate-400">{post.post.likes.length}</p>
+
           <button
+            className={user.isSignedIn ? "" : "cursor-default"}
             disabled={isLiking}
-            onClick={() => like({ id: post.post.id, type: "POST" })}
+            onClick={() =>
+              user.isSignedIn ? like({ id: post.post.id, type: "POST" }) : {}
+            }
           >
             <FaHeart
               className={
-                didIlike ? "text-red-500 hover:text-red-400" : "text-slate-200"
+                user?.user?.id &&
+                post.post.likes.find((like) => like.authorId === user?.user?.id)
+                  ? "text-red-500 hover:text-red-400"
+                  : "text-slate-200"
               }
             />
           </button>
         </div>
-        {postPage && post.author.id === user?.id && (
+
+        {postPage && post.author.id === user?.user?.id && (
           <>
             <button
               disabled={isPostEditing}
@@ -149,7 +154,7 @@ const PostView = ({
             <button
               disabled={isDeletingPost}
               onClick={() => deletePost({ postId: post.post.id })}
-              className=" cursor-pointer text-red-500 hover:text-red-400  disabled:opacity-50"
+              className=" cursor-pointer text-slate-300 hover:text-slate-100   disabled:opacity-50"
             >
               <FaTrash />
             </button>
