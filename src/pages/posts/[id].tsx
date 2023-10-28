@@ -49,7 +49,7 @@ const SinglePostPage = (
       <Layout>
         <PostView post={data} postPage />
         <CreateReplyWizard postId={props.postId} />
-        <div className="border-b border-slate-600 pb-[6px] pl-8 pt-4  ">
+        <div className="border-b border-slate-700 pb-[6px] pl-8 pt-4  ">
           <p className="relative w-fit font-semibold after:absolute after:left-0 after:top-full  after:h-[6px] after:w-full  after:bg-blue-500">
             Replies
           </p>

@@ -8,7 +8,7 @@ const Feed = () => {
   if (!posts) return <h1>Something went wrong</h1>;
   return (
     <section>
-      <p className="border-b border-slate-500  py-4 text-center text-2xl font-semibold text-slate-200">
+      <p className="border-b border-slate-700  py-4 text-center text-2xl font-semibold text-slate-200">
         Feed
       </p>
       <div className="h-4"></div>

@@ -75,7 +75,7 @@ const ProfilePage = (
               Posts
             </p>
           </div>
-          <div className="h-2 w-full border-b border-slate-600" />
+          <div className="h-2 w-full border-b border-slate-700" />
 
           <ProfileFeed userId={data.id} />
         </div>

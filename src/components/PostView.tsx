@@ -96,7 +96,7 @@ const PostView = ({
           <>
             <textarea
               rows={3}
-              className="grow resize-none rounded-sm border border-slate-600 bg-transparent text-2xl"
+              className="grow resize-none rounded-sm border border-slate-700 bg-transparent text-2xl"
               value={input}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setInput(e.target.value)

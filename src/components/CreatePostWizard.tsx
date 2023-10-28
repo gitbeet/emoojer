@@ -31,7 +31,7 @@ const CreatePostWizard = () => {
   return (
     <>
       {isSignedIn ? (
-        <div className="flex w-full items-center justify-center gap-4 border-b border-slate-500 p-8 ">
+        <div className="flex w-full items-center justify-center gap-4 border-b border-slate-700 p-8 ">
           <div className="flex w-full max-w-[700px]  items-start  gap-4">
             <div className="flex w-fit flex-col items-center">
               <div className="h-2"></div>
@@ -51,7 +51,7 @@ const CreatePostWizard = () => {
               <textarea
                 rows={3}
                 className="w-full
-                 resize-none border border-slate-600 bg-transparent"
+                 resize-none border border-slate-700 bg-transparent"
                 value={input}
                 onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
                   setInput(e.target.value)

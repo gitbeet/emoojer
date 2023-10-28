@@ -69,7 +69,7 @@ const ReplyView = ({ reply }: { reply: ReplyWithLikes }) => {
         {editing ? (
           <div className="flex">
             <textarea
-              className="w-full grow resize-none rounded-sm border border-slate-600 bg-transparent text-xl"
+              className="w-full grow resize-none rounded-sm border border-slate-700 bg-transparent text-xl"
               value={input}
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
                 setInput(e.target.value)
