@@ -4,6 +4,7 @@ import { type ChangeEvent, useState } from "react";
 import toast from "react-hot-toast";
 import { api } from "~/utils/api";
 import LoadingSpinner from "./loading";
+import Button from "./Button";
 
 const CreateReplyWizard = ({ postId }: { postId: string }) => {
   const [input, setInput] = useState("");
@@ -67,19 +68,13 @@ const CreateReplyWizard = ({ postId }: { postId: string }) => {
                   setInput(e.target.value)
                 }
               />
-
-              {isCreatingReply ? (
-                <div className="flex w-24 justify-center self-end">
-                  <LoadingSpinner />
-                </div>
-              ) : (
-                <button
-                  className="w-24 self-end rounded-sm border border-slate-600 bg-slate-800 px-4 py-2  md:self-center"
+              <div className="self-end">
+                <Button
+                  content="Reply"
                   disabled={isCreatingReply}
-                >
-                  Reply
-                </button>
-              )}
+                  loading={isCreatingReply}
+                />
+              </div>
             </form>
           </div>
         </div>

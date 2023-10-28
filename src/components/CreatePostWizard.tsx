@@ -4,6 +4,7 @@ import { type ChangeEvent, useState } from "react";
 import { api } from "~/utils/api";
 import LoadingSpinner from "./loading";
 import { toast } from "react-hot-toast";
+import Button from "./Button";
 
 const CreatePostWizard = () => {
   const ctx = api.useUtils();
@@ -56,19 +57,13 @@ const CreatePostWizard = () => {
                   setInput(e.target.value)
                 }
               />
-
-              {Isposting ? (
-                <div className="flex w-24 justify-center self-end">
-                  <LoadingSpinner />
-                </div>
-              ) : (
-                <button
-                  className="w-24 self-end rounded-sm border border-slate-600 bg-slate-800 px-4 py-2  md:self-center"
+              <div className="self-end">
+                <Button
+                  loading={Isposting}
                   disabled={Isposting}
-                >
-                  Post
-                </button>
-              )}
+                  content="Post"
+                />
+              </div>
             </form>
           </div>
         </div>
