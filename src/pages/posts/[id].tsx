@@ -15,6 +15,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import CreateReplyWizard from "~/components/CreateReplyWizard";
 import ReplyView from "~/components/ReplyView";
 import { LoadingPage } from "~/components/loading";
+import SomethingWentWrong from "~/components/SomethingWentWrong";
 
 dayjs.extend(relativeTime);
 
@@ -30,7 +31,7 @@ const SinglePostPage = (
   if (!data)
     return (
       <Layout>
-        <h1>Something went wrong</h1>
+        <SomethingWentWrong />
       </Layout>
     );
   if (isLoading)

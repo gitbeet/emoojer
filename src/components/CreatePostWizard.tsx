@@ -32,9 +32,7 @@ const CreatePostWizard = () => {
       {isSignedIn ? (
         <div className="flex w-full flex-col items-center justify-center gap-4   p-8">
           <div className="p-8 text-center text-5xl font-black">
-            <span className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent ">
-              Create
-            </span>
+            <span className="gradient-text">Create</span>
             <span> a post</span>
             <span> 🚀</span>
           </div>
@@ -75,7 +73,7 @@ const CreatePostWizard = () => {
       ) : (
         <div className="flex w-full flex-col items-center justify-center gap-2 p-16 px-4 text-center text-5xl font-black md:flex-row">
           <SignInButton>
-            <span className="cursor-pointer bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text pb-2 text-transparent hover:brightness-110 md:p-4 md:pr-0">
+            <span className="gradient-text cursor-pointer  pb-2 hover:brightness-110 md:p-4 md:pr-0">
               Sign in
             </span>
           </SignInButton>
