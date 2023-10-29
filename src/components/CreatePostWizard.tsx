@@ -33,8 +33,9 @@ const CreatePostWizard = () => {
         <div className="flex w-full flex-col items-center justify-center gap-4   p-8">
           <div className="p-8 text-center text-5xl font-black">
             <span className="bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent ">
-              Create a post
+              Create
             </span>
+            <span> a post</span>
             <span> 🚀</span>
           </div>
           <div className="h-8"></div>
