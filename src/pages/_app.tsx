@@ -1,13 +1,12 @@
 import { type AppType } from "next/app";
 import { ClerkProvider } from "@clerk/nextjs";
 import { api } from "~/utils/api";
-import { Inter, Roboto, Roboto_Condensed } from "next/font/google";
+import { Inter } from "next/font/google";
 
 import "~/styles/globals.css";
 import { Toaster } from "react-hot-toast";
 const inter = Inter({
   subsets: ["latin"],
-  // weight: ["300", "400", "700"],
 });
 
 const MyApp: AppType = ({ Component, pageProps }) => {

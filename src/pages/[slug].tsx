@@ -15,6 +15,7 @@ import { db } from "~/server/db";
 import { api } from "~/utils/api";
 import { BiArrowBack } from "react-icons/bi";
 import { useRouter } from "next/router";
+import ErrorPage from "./404";
 
 const ProfileFeed = (props: { userId: string }) => {
   const { data, isLoading } = api.post.getPostsByUserId.useQuery({
@@ -37,8 +38,13 @@ const ProfilePage = (
     userId: props.userId,
   });
 
-  if (isLoading) return <LoadingPage size={48} />;
-  if (!data) return <h1>Something went wrong</h1>;
+  if (isLoading)
+    return (
+      <Layout>
+        <LoadingPage />
+      </Layout>
+    );
+  if (!data) return <ErrorPage />;
 
   return (
     <>
