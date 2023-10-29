@@ -2,6 +2,7 @@ import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import React, { type PropsWithChildren } from "react";
 import Button from "./Button";
 import Link from "next/link";
+import Logo from "./Logo";
 const Layout = (props: PropsWithChildren) => {
   const { isSignedIn, user } = useUser();
   return (
@@ -11,17 +12,7 @@ const Layout = (props: PropsWithChildren) => {
         <div className="absolute inset-0 z-[-1]  bg-[rgba(12,12,30,0.15)] "></div>
         <nav className="flex items-center justify-between gap-8  border-b border-slate-700  px-8 py-6 ">
           <Link href="/">
-            <div className="relative flex items-center text-slate-100">
-              <p className="bg-gradient-to-rtext-center hidden text-2xl font-bold  md:block">
-                Em
-              </p>
-              {/* <div className="scale-x-[-1] text-2xl">👀</div> */}
-              <div className="-ml-1 -mt-2 text-2xl">🤪</div>
-              <div className="-ml-1 mt-1 rotate-6 text-2xl">🥰</div>
-              <p className="bg-gradient-to-rtext-center hidden text-2xl font-bold md:block ">
-                jer
-              </p>
-            </div>
+            <Logo />
           </Link>
           {isSignedIn ? (
             <div className="flex items-center gap-2">
