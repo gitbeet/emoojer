@@ -9,6 +9,7 @@ import { FaEdit, FaHeart, FaTrash } from "react-icons/fa";
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { type PostWithUserAndLikes } from "~/server/api/routers/post";
+import Button from "./Button";
 
 dayjs.extend(relativeTime);
 
@@ -99,18 +100,22 @@ const PostView = ({
                 setInput(e.target.value)
               }
             />
-            <button onClick={() => setEdit(false)}>Cancel</button>
-            <button
-              onClick={() =>
-                editPost({
-                  content: input,
-                  authorId: post.author.id,
-                  postId: post.post.id,
-                })
-              }
-            >
-              Save
-            </button>
+            <div>
+              <Button content="Cancel" onClick={() => setEdit(false)} />
+              <div className="h-2"></div>
+              <Button
+                content="Save"
+                disabled={isPostEditing}
+                loading={isPostEditing}
+                onClick={() =>
+                  editPost({
+                    content: input,
+                    authorId: post.author.id,
+                    postId: post.post.id,
+                  })
+                }
+              />
+            </div>
           </>
         ) : (
           <p className="grow text-2xl">{post.post.content}</p>
