@@ -1,29 +1,45 @@
 import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
-import Link from "next/link";
 import React, { type PropsWithChildren } from "react";
 import Button from "./Button";
-
+import Link from "next/link";
 const Layout = (props: PropsWithChildren) => {
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
   return (
-    <main
-      className={` flex min-h-screen w-screen bg-gradient-to-t from-slate-800 to-slate-900 text-white `}
-    >
-      <div className="relative mx-auto min-h-screen w-full border-x border-slate-700 lg:w-[700px]">
-        <nav className="flex items-center justify-between border-b border-slate-700 px-8 py-4">
-          <div className="flex items-center text-slate-300">
-            <p className="text-center text-2xl font-bold">Em</p>
-            <div className="scale-x-[-1] text-2xl">👀</div>
-            <p className="text-center text-2xl font-bold ">jer</p>
-          </div>
+    <main className="relative flex min-h-screen text-slate-100">
+      <div className="fixed inset-0 min-h-screen w-screen bg-slate-800"></div>
+      <div className="relative z-20 mx-auto w-full  lg:w-[700px] lg:border-x-2 lg:border-slate-700  ">
+        <div className="absolute inset-0 z-[-1]  bg-[rgba(12,12,30,0.15)] "></div>
+        <nav className="flex items-center justify-between gap-8  border-b border-slate-700  px-8 py-6 ">
           <Link href="/">
-            <p>Home</p>
+            <div className="relative flex items-center text-slate-100">
+              <p className="bg-gradient-to-rtext-center hidden text-2xl font-bold  md:block">
+                Em
+              </p>
+              {/* <div className="scale-x-[-1] text-2xl">👀</div> */}
+              <div className="-ml-1 -mt-2 text-2xl">🤪</div>
+              <div className="-ml-1 mt-1 rotate-6 text-2xl">🥰</div>
+              <p className="bg-gradient-to-rtext-center hidden text-2xl font-bold md:block ">
+                jer
+              </p>
+            </div>
           </Link>
           {isSignedIn ? (
-            <Button
-              content={<SignOutButton>Sign out</SignOutButton>}
-              onClick={() => null}
-            />
+            <div className="flex items-center gap-2">
+              <span className="hidden md:inline">
+                <span>Welcome, </span>
+                <span className="font-bold">
+                  {user.username
+                    ? user.username
+                    : user.firstName && user.lastName
+                    ? `${user.firstName} ${user.lastName}`
+                    : user.firstName}
+                </span>
+              </span>
+              <Button
+                content={<SignOutButton>Sign out</SignOutButton>}
+                onClick={() => null}
+              />
+            </div>
           ) : (
             <Button
               content={<SignInButton>Sign in</SignInButton>}

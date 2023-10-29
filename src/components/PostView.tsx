@@ -63,10 +63,7 @@ const PostView = ({
     });
 
   return (
-    <div
-      className={`${postPage ? "" : "border-b"} border-slate-700  p-8`}
-      key={post.post.id}
-    >
+    <div className="border-b border-slate-700  p-8 " key={post.post.id}>
       <div className="flex gap-2">
         <Link href={`/${post.author.id}`} className=" hover:underline">
           <p>@{post.author.username}</p>
@@ -86,7 +83,7 @@ const PostView = ({
       <div className="h-4"></div>
       <div className="flex items-center gap-8">
         <Image
-          className="rounded-full border-2 border-black"
+          className="rounded-full border-2 border-slate-950"
           src={post.author.profilePicture}
           width={68}
           height={68}

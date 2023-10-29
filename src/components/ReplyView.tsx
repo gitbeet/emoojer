@@ -7,6 +7,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 import { FaEdit, FaHeart, FaTrash } from "react-icons/fa";
 import { useUser } from "@clerk/nextjs";
 import toast from "react-hot-toast";
+import Button from "./Button";
 
 dayjs.extend(relativeTime);
 type ReplyWithLikes = RouterOutputs["reply"]["getRepliesByPostId"][number];
@@ -60,14 +61,14 @@ const ReplyView = ({ reply }: { reply: ReplyWithLikes }) => {
       <div className="h-4"></div>
       <div className="flex items-center gap-8">
         <Image
-          className="rounded-full border-2 border-black"
+          className="rounded-full border-2 border-slate-950"
           src={reply.author.profilePicture}
           width={48}
           height={48}
           alt={`${reply.author.username}'s profile picture`}
         />
         {editing ? (
-          <div className="flex">
+          <div className="flex w-full justify-between gap-8">
             <textarea
               className="w-full grow resize-none rounded-sm border border-slate-700 bg-transparent text-xl"
               value={input}
@@ -75,9 +76,12 @@ const ReplyView = ({ reply }: { reply: ReplyWithLikes }) => {
                 setInput(e.target.value)
               }
             />
-            <div>
-              <button onClick={() => setEditing(false)}>Cancel</button>
-              <button
+            <div className="flex  items-end gap-2">
+              <Button content="Cancel" onClick={() => setEditing(false)} />
+              <Button
+                disabled={isEditing}
+                loading={isEditing}
+                content="Save"
                 onClick={() =>
                   edit({
                     content: input,
@@ -85,9 +89,7 @@ const ReplyView = ({ reply }: { reply: ReplyWithLikes }) => {
                     authorId: reply.author.id,
                   })
                 }
-              >
-                Save
-              </button>
+              />
             </div>
           </div>
         ) : (

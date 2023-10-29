@@ -49,8 +49,8 @@ const ProfilePage = (
       </Head>
       <Layout>
         <div>
-          <div className="sticky top-0 z-10 h-12 w-full xl:max-w-[700px]">
-            <div className="absolute h-full w-full bg-[black] opacity-50 backdrop-blur-md" />
+          <div className="sticky top-0 z-10 h-12 w-full ">
+            <div className="absolute h-full w-full bg-slate-800 opacity-75 backdrop-blur-md" />
             <button
               onClick={back}
               className="absolute top-1/2 z-10 ml-8 flex -translate-y-1/2 items-center gap-2"
@@ -58,11 +58,11 @@ const ProfilePage = (
               <BiArrowBack /> Go back
             </button>
           </div>
-          <div className="relative h-56 bg-gradient-to-r from-blue-800 to-indigo-900">
+          <div className="relative h-56 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500">
             <Image
               src={data.profilePicture}
               alt={`@${data.username}'s profile picture`}
-              className="absolute bottom-0 left-0 -mb-[72px] ml-8 aspect-square rounded-full border-4 border-black bg-black"
+              className="absolute bottom-0 left-0 -mb-[72px] ml-8 aspect-square rounded-full border-4 border-slate-950 bg-black"
               width={144}
               height={144}
             />
@@ -71,7 +71,7 @@ const ProfilePage = (
           <div className="px-8 text-2xl font-bold">{`@${data.username}`}</div>
           <div className="h-16" />
           <div className="relative w-fit pl-8 font-semibold ">
-            <p className="relative w-fit font-semibold after:absolute after:bottom-0 after:left-0 after:-mb-2 after:h-[6px] after:w-full after:bg-blue-500">
+            <p className="relative w-fit font-semibold after:absolute after:bottom-0 after:left-0 after:-mb-2 after:h-[6px] after:w-full after:bg-pink-500">
               Posts
             </p>
           </div>
