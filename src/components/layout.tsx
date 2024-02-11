@@ -1,10 +1,18 @@
-import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import {
+  SignInButton,
+  SignOutButton,
+  useClerk,
+  useSignIn,
+  useUser,
+} from "@clerk/nextjs";
 import React, { type PropsWithChildren } from "react";
 import Button from "./Button";
 import Link from "next/link";
 import Logo from "./Logo";
 const Layout = (props: PropsWithChildren) => {
   const { isSignedIn, user } = useUser();
+  const { signOut } = useClerk();
+  const { signIn, isLoaded } = useSignIn();
   return (
     <main className="relative flex min-h-screen text-slate-100">
       <div className="fixed inset-0 min-h-screen w-screen bg-slate-800"></div>
@@ -26,16 +34,22 @@ const Layout = (props: PropsWithChildren) => {
                     : user.firstName}
                 </span>
               </span>
-              <Button
-                content={<SignOutButton>Sign out</SignOutButton>}
-                onClick={() => null}
-              />
+              <SignOutButton>
+                <Button
+                  content={<p>Sign out</p>}
+                  onClick={() => void 0}
+                  loading={!isLoaded}
+                />
+              </SignOutButton>
             </div>
           ) : (
-            <Button
-              content={<SignInButton>Sign in</SignInButton>}
-              onClick={() => null}
-            />
+            <SignInButton>
+              <Button
+                content={<p>Sign in</p>}
+                onClick={() => void 0}
+                loading={!isLoaded}
+              />
+            </SignInButton>
           )}
         </nav>
         {props.children}
